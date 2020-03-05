@@ -1,2 +1,0 @@
-source("global.R")
-
