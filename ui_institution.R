@@ -7,7 +7,10 @@ tabItem_institution <- tabItem(tabName = "Radar",
                                    # サイドバー
                                    sidebarPanel(
                                        sliderInput("interval", "期間", min = 2018, max = 2020, value = c(2018, 2019)),
-                                       textInput("institution", "機関名", value = "信州"),
+                                       textInput("institution1", "機関名１", value = "信州"),
+                                       textInput("institution2", "機関名２", value = ""),
+                                       textInput("institution3", "機関名３", value = ""),
+                                       br(),
                                        selectInput("type1", "対象", choices = c("件数", "総額")),
                                        selectInput("type2", "表示方法", choices = c("対数", "百分率"))
                                        ),

@@ -32,6 +32,16 @@ tabItem_overall <- tabItem(tabName = "Overall",
                                plotlyOutput("overall_bar"),
                                br(),
                                
+                               # 折れ線グラフ  
+                               h1(strong("Line plot")),
+                               fluidRow(
+                                   column(3, selectInput("line_yaxis", "Y軸の値", choices = list("件数", "総額", "平均", "総額シェア"))),
+                                   column(3, sliderInput("amount", "表示件数", min = 0, max = 50, value = 10, step = 1))
+                               ),
+                               plotlyOutput("overall_line"),
+                               br(),
+                               
+                               
                                # 散布図
                                h1(strong("Scatter plot")),
                                fluidRow(

@@ -1,5 +1,6 @@
 source("global.R")
 
+
 # 元データフレームの作成
 radarD <- D %>% 
     # 中区分列作成
@@ -15,7 +16,8 @@ radarD <- D %>%
     # 注：複数の審査区分にまたがる研究課題はコピーされている #
     ##########################################################
 
-# 対数変換関数
+
+# 変換関数
 clean.data <- function(x, y){
     
     x %>% group_by(所属機関) %>%
@@ -31,7 +33,6 @@ clean.data <- function(x, y){
 interval <- list(対数 = c(0, 4), 百分率 = c(50, 100))   
 
 
-
 observe({
     
     # 中区分
@@ -39,6 +40,7 @@ observe({
         
     # 中区分ごとにネスト
         clean_M <- radarD %>% 
+            filter(年度 %in% input$interval) %>%
             select(-大区分) %>% 
             unique %>%
             filter(!is.na(中区分コード)) %>%
@@ -52,21 +54,21 @@ observe({
             mutate(表示方法 = ifelse(str_detect(key, "Log"), "対数", "百分率")) %>%
             
             # filter
-            filter(所属機関 == input$institution) %>%
+            filter(所属機関 %in% c(input$institution1, input$institution2, input$institution3)) %>%
             filter(対象 == input$type1) %>%
             filter(表示方法 == input$type2) %>%
             mutate(area = as.numeric(area)) %>%
             arrange(area) %>%
             mutate(area = as.character(area))
         
-        clean_M <- rbind(clean_M, clean_M[1,])
+        clean_M <- rbind(clean_M, clean_M[1:length(unique(clean_M$所属機関)),,])
         
-    plot_ly(type = 'scatterpolar', r = clean_M$value, theta = clean_M$area, fill = 'toself', mode = "markers", height = 600) %>% 
+    plot_ly(clean_M, type = 'scatterpolar', r = ~value, theta = ~area, color = ~所属機関, fill = "toself", alpha = 0.1, mode = "line", height = 600) %>% 
         layout(polar = list(
             radialaxis = list(visible = T, range = interval[[input$type2]], angle = 90, tickfont = list(size = 12, color = "red")),
             angularaxis = list(rotation = 90, direction = "clockwise", type = "category")
         ),
-        showlegend = F
+        showlegend = T
         )
     })
 
@@ -77,6 +79,7 @@ observe({
         # 大区分ごとにネスト
         clean_L <- radarD %>% 
             filter(!is.na(大区分)) %>%
+            filter(年度 %in% input$interval) %>%
             nest(-大区分) %>%
             mutate(clean = map2(data, 大区分, clean.data)) %>% .$clean %>%
             bind_rows %>% select(所属機関, LogAmount, LogCount, PercAmount, PercCount, area) %>%
@@ -87,18 +90,19 @@ observe({
             mutate(表示方法 = ifelse(str_detect(key, "Log"), "対数", "百分率")) %>%
             
             # filter
-            filter(所属機関 == input$institution) %>%
+            filter(所属機関 %in% c(input$institution1, input$institution2, input$institution3)) %>%
             filter(対象 == input$type1) %>%
-            filter(表示方法 == input$type2) 
+            filter(表示方法 == input$type2) %>%
+            arrange(area)
         
-        clean_L <- rbind(clean_L, clean_L[1,])
+        clean_L <- rbind(clean_L, clean_L[1:length(unique(clean_L$所属機関)),])
         
-        plot_ly(type = 'scatterpolar', r = clean_L$value, theta = clean_L$area, fill = 'toself', mode = "markers", height = 600) %>% 
+        plot_ly(clean_L, type = 'scatterpolar', r = ~value, theta = ~area, color = ~所属機関, alpha = 0.1, fill = "toself", mode = "line", height = 600) %>% 
             layout(polar = list(
                 radialaxis = list(visible = T, range = interval[[input$type2]], angle = 90, tickfont = list(size = 12, color = "red")),
                 angularaxis = list(rotation = 90, direction = "clockwise", type = "category")
             ),
-            showlegend = F
+            showlegend = T
             )
     })
     

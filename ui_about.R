@@ -9,6 +9,7 @@ tabItem_about <- tabItem(tabName = "About",
             開発の目的としては、機関別の特徴や審査区分別の特徴、研究種目別の特徴等をざっくりとでも掴めるようにすることを
             目指しています。まだまだ開発途上ですので、何か不具合等ございましたら遠慮なくご連絡ください。また、他の分析の
             観点等のリクエストも大歓迎です。"),
+          br(),
           
           # 備考
           h3(strong("備考")),
@@ -18,17 +19,23 @@ tabItem_about <- tabItem(tabName = "About",
           p(strong("【他大学の皆様へ】"), "このアプリはShinyapps.ioサーバーの無料プランを使っており、一月あたりの使用時間が決まっています。そのため、
             他大学の皆様におかれましては、ぜひご自身の所属機関用にカスタマイズして実装することをご検討いただけたらと思います。
             このアプリのソースコードもGithubにて公開してますので、適宜ご参照ください。"),
+          br(),
           
-          # このアプリの材料
-          h3(strong("このアプリの材料")),
-          p(strong("◯KAKENデータベース")),
-          p("https://kaken.nii.ac.jp"),
-          p("【 期 間 】2018年〜2019年"),
-          p("【 対 象 】「採択後辞退」を除く全採択課題"),
-          p("【取得日 】2020年3月1日（随時更新）"),
-          p(strong("◯ソースコード")),
+          # 出典
+          h3(strong("出典")),
+          p("KAKEN：科学研究費助成事業データベース（国立情報学研究所）（ https://kaken.nii.ac.jp/ ）をもとに作成"),
+          p("【期間】2018年〜2019年"),
+          p("【対象】「採択後辞退」を除く全採択課題"),
+          p("【取得日】2020年3月1日（随時更新）"),
+          br(),
+          
+          # ソースコード
+          h3(strong("ソースコード")),
           p("https://github.com/TakuyaK0625/KAKEN.App"),
-          p(strong("◯参考")),
+          br(),
+          
+          # 参考
+          h3(strong("参考")),
           p("https://shiny.rstudio.com"),
           br(),
           
@@ -36,7 +43,7 @@ tabItem_about <- tabItem(tabName = "About",
           h4(strong("連絡先")),
           p("信州大学 学術研究・産学官連携推進機構"),
           p("久保 琢也"),
-          p("E-mail: kubotaku@shinshu-u.ac.jp")
+          p("E-mail: kubotaku[AT]shinshu-u.ac.jp")
           
           
 )
