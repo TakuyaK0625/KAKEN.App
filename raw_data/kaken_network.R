@@ -1,3 +1,7 @@
+##########################
+# パッケージの読み込み
+##########################
+
 library(dplyr)
 library(tidyr)
 library(purrr)
@@ -5,11 +9,21 @@ library(stringr)
 library(data.table)
 library(igraph)
 library(threejs)
+library(data.table)
 
-# インポート
-d <- read.csv("../01_cleaned_data/clean_df.csv", fileEncoding = "CP932", stringsAsFactors = F)
+# データインポート
+d <- fread("../99_cleaned_data/cleaned_df.csv")
 
-# データの整形・共同研究者の展開と整理
+
+##########################
+# データの整形
+##########################
+
+
+# --------------------------
+# 共同研究者列の展開と整理
+# --------------------------
+
 D0 <- d %>% filter(研究分担者 != "") %>%
     mutate(代表ID = str_extract(研究代表者, "\\d{8}")) %>%
     mutate(分担者 = str_split(研究分担者, "\n")) %>% 
@@ -31,47 +45,53 @@ D0 <- d %>% filter(研究分担者 != "") %>%
     mutate(分担所属 = str_replace(分担所属, "大学$", "")) %>%
     mutate(分担所属 = ifelse(str_detect(分担所属, "国立国語研究所"), "国立国語研究所", 分担所属))
 
-# 全ての研究者のIDと所属を取得
-Res <- bind_rows(
-    D0 %>% select(代表ID, 所属機関) %>% rename("ID" = "代表ID", "所属" = "所属機関"),
-    D0 %>% select(分担ID, 分担所属) %>% rename("ID" = "分担ID", "所属" = "分担所属")
-    ) %>%
-    unique
 
-Res %>% group_by(ID) %>%
-    summarize(N =n()) %>%
-    filter(N > 1)
+# --------------------------
+#  研究者組み合わせ関数
+# --------------------------
 
-D0 %>% filter(分担ID == "50250262")
-
-
-# 研究者組み合わせ関数
 com <- function(x){
-  c(x$代表ID, x$分担ID) %>%
-    unique() %>%
-    combn(2) %>%
-    t %>%
-    as.data.frame()
+    c(x$代表ID, x$分担ID) %>%
+        unique() %>%
+        combn(2) %>%
+        t %>%
+        as.data.frame()
 }
 
-df$clean <- map(df$data, com)
+
+# --------------------------
+#  
+# --------------------------
 
 
-# 一旦エクスポート
-df %>% select(-data) %>% filter(年度 == 2018) %>% unnest(cols = clean) %>% 
-    fwrite("kaken_network_2018.csv")
-df %>% select(-data) %>% filter(年度 == 2019) %>% unnest(cols = clean) %>% 
-    fwrite("kaken_network_2019.csv")
+DF2018 <- D0 %>% filter(年度 == 2018) %>%
+    nest(-年度, -研究課題番号, -研究種目, -区分名) %>%
+    mutate(clean = map(data, com)) %>% select(-data) %>%
+    unnest(clean)
+
+DF2019 <- D0 %>% filter(年度 == 2019) %>%
+    nest(-年度, -研究課題番号, -研究種目, -区分名) %>%
+    mutate(clean = map(data, com)) %>% select(-data) %>%
+    unnest(clean)
+
+DF_all <- rbind(DF2018, DF2019) %>%
+    select(V1, V2, 研究課題番号, 研究種目, 年度, 区分名)
+
+DF_all %>% fwrite("../99_cleaned_data/network.csv")
 
 
 
-DF <- fread("kaken_network_2018.csv", stringsAsFactors = F) %>%
-    bind_rows(
-        fread("kaken_network_2019.csv", stringsAsFactors = F)
-    )
+# --------------------------
+#  研究者リスト 
+# --------------------------
 
-graph <- DF %>% filter(区分名 == "大区分K") %>% 
-    select(V1, V2, 研究種目, 区分名, 総配分額, 年度) %>%
-    graph_from_data_frame(directed = FALSE)
+Res.list <- bind_rows(
+    D0 %>% select(年度, 代表ID, 所属機関) %>% rename("ID" = "代表ID", "所属" = "所属機関"),
+    D0 %>% select(年度, 分担ID, 分担所属) %>% rename("ID" = "分担ID", "所属" = "分担所属")
+) %>% unique
 
-graphjs(graph, vertex.size = 1, edge.width = 3, edge.color = "black", showLabels = T)
+Res.list %>% fwrite("../99_cleaned_data/researcher.csv")
+
+
+
+
