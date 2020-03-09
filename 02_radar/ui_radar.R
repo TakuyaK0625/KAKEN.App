@@ -6,7 +6,7 @@ tabItem_radar <- tabItem(tabName = "radar",
     
                                    # サイドバー
                                    sidebarPanel(
-                                       sliderInput("interval", "期間", min = 2018, max = 2020, value = c(2018, 2019)),
+                                       sliderInput("year_radar", "期間", min = 2018, max = 2020, value = c(2018, 2019)),
                                        textInput("institution1", "機関名１", value = "信州"),
                                        textInput("institution2", "機関名２", value = ""),
                                        textInput("institution3", "機関名３", value = ""),

@@ -5,7 +5,7 @@ tabItem_inst <- tabItem(tabName = "institution", sidebarLayout(
                              # サイドバー
                              sidebarPanel(
                                  fluidRow(
-                                     column(6, sliderInput("year_inst", "対象年度", min = 2018, max = 2020, value = c(2018, 2019), step = 1)),
+                                     column(6, sliderInput("year_inst", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
                                      column(6, selectInput("group_inst", "絞り込み", choices = c("全機関", names(Group)))),
                                      column(6, textInput("inst_inst", "追加機関", value = "信州"))
                                  ),

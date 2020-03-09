@@ -14,6 +14,8 @@ library(plotly)
 library(fmsb)
 library(wordcloud2)
 library(data.table)
+library(igraph)
+library(threejs)
 
 
 #########################################################
@@ -22,11 +24,14 @@ library(data.table)
 
 #------------
 # 科研費
-D <- fread("99_cleaned_data/clean_df.csv", stringsAsFactors = F) 
+D <- fread("99_cleaned_data/cleaned_df.csv", stringsAsFactors = F) 
+radarD <- fread("99_cleaned_data/radar_df.csv")
+networkD <- fread("99_cleaned_data/network.csv")
+researcher <- fread("99_cleaned_data/researcher.csv")
 
 #------------
 # 審査区分表
-kubun <- read.csv("99_cleaned_data/kubun.csv", stringsAsFactors = F, fileEncoding = "UTF-8")
+kubun <- read.csv("99_cleaned_data/kubun.csv", stringsAsFactors = F)
 
     
 #########################################################
@@ -43,7 +48,7 @@ type <- D$研究種目 %>% unique %>% sort
 review_list <- list()
 for (i in unique(kubun$大区分)) {
     sub_list <- list()
-    for(j in unique(kubun[kubun$大区分 == i, "中区分"])){
+    for(j in (kubun[kubun$大区分 == i, "中区分"])){
         sub <- as.list(rep("", length(kubun[kubun$中区分 == j, 1])))
         names(sub) <- kubun[kubun$中区分 == j, "小区分"]
         sub_list[[j]] <- sub
@@ -53,6 +58,7 @@ for (i in unique(kubun$大区分)) {
 
 review_list <- c(review_list, "")
 names(review_list) [12] <- "その他"
+
 
 
 #-----------------
@@ -77,4 +83,19 @@ Group <- list(旧帝大 = c("東京", "京都", "大阪", "北海道", "東北",
                  国立財務_H = c("岩手", "茨城", "宇都宮", "埼玉", "お茶の水女子", "横浜国立", "静岡", "奈良女子", "和歌山")
 )
 
+
+
+#-----------------
+# レーダーチャート用関数
+
+clean.radar <- function(x, y){
+    
+    x %>% group_by(所属機関) %>%
+        summarize(N = n(), Total = sum(as.numeric(直接経費))) %>%
+        mutate(LogAmount = log10(Total)-max(log10(Total)-4)) %>%
+        mutate(LogCount = log10(N)-max(log10(N)-4)) %>%
+        mutate(PercAmount = percentile(Total)) %>%
+        mutate(PercCount = percentile(N)) %>%
+        mutate(area = y)
+}
 

@@ -7,7 +7,7 @@ tabItem_detail <- tabItem(tabName = "detail",
                                # サイドバー
                                sidebarPanel(
                                    fluidRow(
-                                       column(6, sliderInput("year_detail", "対象年度", min = 2018, max = 2020, value = c(2018, 2019), step = 1)),
+                                       column(6, sliderInput("year_detail", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
                                        column(6, selectInput("group_detail", "絞り込み", choices = c("全機関", names(Group))))
                                    ),
                                    p(strong("審査区分")),
@@ -25,8 +25,12 @@ tabItem_detail <- tabItem(tabName = "detail",
                                                    h2("割合"),
                                                    plotlyOutput("job_ratio")
                                                ),
-                                               tabPanel("直接経費",
-                                                   plotlyOutput("review_amount_gragh")
+                                               tabPanel("直接経費・年数",
+                                                   h2("直接経費総額"),
+                                                   sliderInput("duration_detail", "年数", min = 1, max = 6, value = c(3, 5)),      
+                                                   plotlyOutput("directcost"),
+                                                   h2("研究期間"),
+                                                   plotlyOutput("years")
                                                ),
                                                tabPanel("研究分担者数",
                                                    plotlyOutput("review_buntan_gragh")
@@ -34,7 +38,7 @@ tabItem_detail <- tabItem(tabName = "detail",
                                                tabPanel("キーワード",
                                                         h2("ワードクラウド"),
                                                         wordcloud2Output("keyword_cloud"),
-#                                                        h2("集計表"),
+                                                        h2("集計表"),
                                                         dataTableOutput("keyword_table")
                                                         )
                                                )

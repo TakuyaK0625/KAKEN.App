@@ -23,7 +23,7 @@ observe({
       filter(研究種目 %in% input$type_inst) %>%
       
       # 集計期間でフィルター      
-      filter(年度 %in% input$year_inst)
+      filter(年度 %in% input$year_inst[1]:input$year_inst[2])
   })
   
   

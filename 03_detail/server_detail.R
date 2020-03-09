@@ -21,7 +21,7 @@ observe({
         # 研究種目、年度でフィルター
         D %>% 
             filter(研究種目 %in% input$type_detail) %>%
-            filter(年度 %in% input$year_detail)
+            filter(年度 %in% input$year_detail[1]:input$year_detail[2])
     })
     
 
@@ -54,16 +54,23 @@ observe({
 
     
 # -----------------------------------
-# 直接経費総額
+# 直接経費総額・年数
     
-    # 箱ひげ図
-    output$review_amount_gragh <- renderPlotly({
+    # 直接経費総額
+    output$directcost <- renderPlotly({
         DF() %>% 
+            filter(年数 %in% input$duration_detail[1]:input$duration_detail[2]) %>%
             plot_ly(y = ~区分名, x = ~直接経費, type = "box", orientation = "h") %>%
             layout(yaxis = list(title = ""))
     })
     
-
+    # 年数
+    output$years <- renderPlotly({
+        DF() %>% 
+            plot_ly(y = ~区分名, x = ~年数, type = "box", orientation = "h") %>%
+            layout(yaxis = list(title = ""))
+    })
+    
 # -----------------------------------
 # 研究分担者数
     
