@@ -90,4 +90,4 @@ DF <- bind_rows(d2018, d2019) %>%
 
 
 # ファイルの出力
-write.csv(DF, "../01_cleaned_data/cleaned_df.csv", fileEncoding = "UTF-8")
+write.csv(DF, "../99_cleaned_data/cleaned_df.csv", fileEncoding = "UTF-8")
