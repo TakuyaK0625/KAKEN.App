@@ -3,8 +3,7 @@ https://takuyak0625.shinyapps.io/KAKEN-App/
 
 # 使い方
 
-0.「global.R」の最初に列挙したパッケージをインストールする<br>
-  例：install.packages("shiny")
+0.「global.R」の最初に列挙したパッケージをインストールする
 
 1.「raw_data」フォルダにダウンロードしてきた科研費データ（csv形式）を入れる。
 
