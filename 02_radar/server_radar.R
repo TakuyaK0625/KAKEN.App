@@ -1,9 +1,6 @@
 source("global.R")
 radarD <- fread("02_radar/radar_df.csv")
 
-# 軸範囲
-interval_radar <- list(対数 = c(0, 4), 百分率 = c(50, 100))   
-
 
 observe({
     
@@ -20,17 +17,15 @@ observe({
             filter(!is.na(中区分コード)) %>%
             nest(-中区分コード) %>%
             mutate(clean = map2(data, 中区分コード, clean.radar)) %>% .$clean %>%
-            bind_rows %>% select(所属機関, LogAmount, LogCount, PercAmount, PercCount, area) %>%
+            bind_rows %>% select(所属機関, LogAmount, LogCount, area) %>%
             gather(key = "key", value = "value", -所属機関, -area) %>%
             spread(key = area, value = value, fill = 0) %>%
             gather(key = "area", value = "value", -所属機関, -key) %>%
             mutate(対象 = ifelse(str_detect(key, "Amount"), "件数", "総額")) %>%
-            mutate(表示方法 = ifelse(str_detect(key, "Log"), "対数", "百分率")) %>%
-            
+
             # filter
             filter(所属機関 %in% c(input$institution1, input$institution2, input$institution3)) %>%
-            filter(対象 == input$type1) %>%
-            filter(表示方法 == input$type2) %>%
+            filter(対象 == input$type_radar) %>%
             mutate(area = as.numeric(area)) %>%
             arrange(area) %>%
             mutate(area = as.character(area))
@@ -41,7 +36,7 @@ observe({
         # プロット  
         plot_ly(clean_M, type = 'scatterpolar', r = ~value, theta = ~area, color = ~所属機関, fill = "toself", alpha = 0.1, mode = "line", height = 600) %>% 
             layout(polar = list(
-                radialaxis = list(visible = T, range = interval_radar[[input$type2]], angle = 90, tickfont = list(size = 12, color = "red")),
+                radialaxis = list(visible = T, range = c(0, 4), angle = 90, tickfont = list(size = 12, color = "red")),
                 angularaxis = list(rotation = 90, direction = "clockwise", type = "category")
                 ),
                 showlegend = T
@@ -61,17 +56,15 @@ observe({
             filter(年度 %in% input$year_radar[1]:input$year_radar[2]) %>%
             nest(-大区分) %>%
             mutate(clean = map2(data, 大区分, clean.radar)) %>% .$clean %>%
-            bind_rows %>% select(所属機関, LogAmount, LogCount, PercAmount, PercCount, area) %>%
+            bind_rows %>% select(所属機関, LogAmount, LogCount, area) %>%
             gather(key = "key", value = "value", -所属機関, -area) %>%
             spread(key = area, value = value, fill = 0) %>%
             gather(key = "area", value = "value", -所属機関, -key) %>%
             mutate(対象 = ifelse(str_detect(key, "Amount"), "件数", "総額")) %>%
-            mutate(表示方法 = ifelse(str_detect(key, "Log"), "対数", "百分率")) %>%
-            
+
             # filter
             filter(所属機関 %in% c(input$institution1, input$institution2, input$institution3)) %>%
-            filter(対象 == input$type1) %>%
-            filter(表示方法 == input$type2) %>%
+            filter(対象 == input$type_radar) %>%
             arrange(area)
         
         # 各機関の第一行目を追加
@@ -80,7 +73,7 @@ observe({
         # プロット
         plot_ly(clean_L, type = 'scatterpolar', r = ~value, theta = ~area, color = ~所属機関, alpha = 0.1, fill = "toself", mode = "line", height = 600) %>% 
             layout(polar = list(
-                radialaxis = list(visible = T, range = interval_radar[[input$type2]], angle = 90, tickfont = list(size = 12, color = "red")),
+                radialaxis = list(visible = T, range = c(0, 4), angle = 90, tickfont = list(size = 12, color = "red")),
                 angularaxis = list(rotation = 90, direction = "clockwise", type = "category")
             ),
             showlegend = T

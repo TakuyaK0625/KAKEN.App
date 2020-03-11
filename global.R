@@ -94,8 +94,6 @@ clean.radar <- function(x, y){
         summarize(N = n(), Total = sum(as.numeric(直接経費))) %>%
         mutate(LogAmount = log10(Total)-max(log10(Total)-4)) %>%
         mutate(LogCount = log10(N)-max(log10(N)-4)) %>%
-        mutate(PercAmount = percentile(Total)) %>%
-        mutate(PercCount = percentile(N)) %>%
         mutate(area = y)
 }
 
