@@ -21,6 +21,6 @@ Rstudio（https://rstudio.com）
 
 4. 「app.R」を開き、全選択して実行。Rstudioであれば「Run App」ボタンを押しても実行できます。
 
-# URL
+## URL
 https://takuyak0625.shinyapps.io/KAKEN-App/  
 ※使用時間の制限あり（active horus 25h/month）
