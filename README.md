@@ -12,4 +12,4 @@ https://takuyak0625.shinyapps.io/KAKEN-App/
 
 3. 同じフォルダ内のすべてのRファイルを実行（データの下処理）。
 
-4. 「app.R」をRstudioで開き、「Run App」ボタンで実行。
+4. 「app.R」をRstudioで開き、「Run App」ボタンで実行、もしくは全選択して実行。
