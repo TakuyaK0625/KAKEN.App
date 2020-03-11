@@ -1,4 +1,6 @@
 source("global.R")
+networkD <- fread("04_network/network.csv")
+researcher <- fread("04_network/researcher.csv")
 
 observe({
   
@@ -31,14 +33,14 @@ observe({
   output$network <- renderScatterplotThree({
     
       g <- D() %>% graph_from_data_frame(directed = FALSE)
-      
-      inst <- researcher %>% filter(所属 == input$inst_net) %>% .$ID
+      inst <- researcher %>% filter(所属 == input$inst_net) %>% 
+          filter(年度 %in% input$year_net[1]:input$year_net[2]) %>%
+          .$ID
       colors <- ifelse(V(g)$name %in% inst, "blue", "orange")
+      
       set.seed(0)
-  
-  graphjs(g, vertex.color = colors, vertex.size = 0.4, vertex.label = V(g)$name)
+      graphjs(g, vertex.color = colors, vertex.size = 0.3, vertex.label = V(g)$name)
   
   })
-  
-  
+
 })

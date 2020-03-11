@@ -1,5 +1,3 @@
-source("global.R")
-
 observe({
   
   # 審査区分チェックボックス

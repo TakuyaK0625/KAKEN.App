@@ -1,5 +1,5 @@
 source("global.R")
-
+radarD <- fread("02_radar/radar_df.csv")
 
 # 軸範囲
 interval_radar <- list(対数 = c(0, 4), 百分率 = c(50, 100))   

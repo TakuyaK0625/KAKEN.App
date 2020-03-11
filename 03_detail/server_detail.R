@@ -1,6 +1,3 @@
-source("global.R")
-
-
 observe({
     
     output$tree_detail <- renderTree({ 
