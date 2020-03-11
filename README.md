@@ -5,7 +5,7 @@
 
 ## いるもの
 R（https://cran.r-project.org）<br>
-Rstudio（https://rstudio.com）（あると便利）
+Rstudio（https://rstudio.com）（なくてもいいけどあると便利）
 
 ## 使い方
 細かいことはさておき、以下の通りにしたらローカルで実行できます（はず）。
@@ -21,5 +21,5 @@ Rstudio（https://rstudio.com）（あると便利）
 4. 「app.R」を開き、全選択して実行。Rstudioであれば「Run App」ボタンを押しても実行できます。
 
 # URL
-https://takuyak0625.shinyapps.io/KAKEN-App/
+https://takuyak0625.shinyapps.io/KAKEN-App/  
 ※使用時間の制限あり（active horus 25h/month）
