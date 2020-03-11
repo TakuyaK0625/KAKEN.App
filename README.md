@@ -4,8 +4,9 @@
 オンライン版はかなり遅いのですが、ローカルだと結構サクサク動いてくれます。
 
 ## いるもの
-R（https://cran.r-project.org）<br>
-Rstudio（https://rstudio.com）（なくてもいいけどあると便利）
+R（https://cran.r-project.org)  
+Rstudio（https://rstudio.com）  
+（※Rstudioはなくてもいいけどあると便利）
 
 ## 使い方
 細かいことはさておき、以下の通りにしたらローカルで実行できます（はず）。
