@@ -25,7 +25,8 @@ d <- fread("../99_cleaned_data/cleaned_df.csv")
 # --------------------------
 
 D0 <- d %>% filter(研究分担者 != "") %>%
-    mutate(代表ID = str_extract(研究代表者, "\\d{8}")) %>%
+    
+    # 研究分担者列の整理
     mutate(分担者 = str_split(研究分担者, "\n")) %>% 
     unnest(cols = 分担者) %>%
     mutate(分担ID = str_extract(分担者, "\\d{8}")) %>%
@@ -39,11 +40,7 @@ D0 <- d %>% filter(研究分担者 != "") %>%
     mutate(分担所属 = str_replace(分担所属, "^地方独立行政法人", "")) %>%
     mutate(分担所属 = str_replace(分担所属, "^一般財団法人", "")) %>%
     mutate(分担所属 = str_replace(分担所属, "株式会社", "")) %>%
-    mutate(分担所属 = str_replace(分担所属, "産業技術総合研究所", "産総研")) %>%
-    mutate(分担所属 = str_replace(分担所属, "理化学研究所", "理研")) %>%
-    mutate(分担所属 = str_replace(分担所属, "^国立文化財機構", "")) %>%
-    mutate(分担所属 = str_replace(分担所属, "大学$", "")) %>%
-    mutate(分担所属 = ifelse(str_detect(分担所属, "国立国語研究所"), "国立国語研究所", 分担所属))
+    mutate(分担所属 = str_replace(分担所属, "大学$", ""))
 
 
 # --------------------------
