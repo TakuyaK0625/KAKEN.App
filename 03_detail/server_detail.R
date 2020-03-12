@@ -8,15 +8,15 @@ observe({
         
         # 研究機関グループでフィルター
         if (input$group_detail != "全機関"){
-            D <- D %>% filter(所属機関 %in% Group[[input$group_detail]])
+            detailD <- detailD %>% filter(所属機関 %in% Group[[input$group_detail]])
         }
         
         # 審査区分でフィルター
         area <- get_selected(input$tree_detail, format = "classid") %>% unlist
-        D <- D %>% filter(区分名 %in% area) 
+        detailD <- detailD %>% filter(区分名 %in% area) 
 
         # 研究種目、年度でフィルター
-        D %>% 
+        detailD %>% 
             filter(研究種目 %in% input$type_detail) %>%
             filter(年度 %in% input$year_detail[1]:input$year_detail[2])
     })

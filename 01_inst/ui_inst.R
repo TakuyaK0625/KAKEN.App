@@ -1,12 +1,10 @@
-source("global.R")
-
 tabItem_inst <- tabItem(tabName = "institution", sidebarLayout(
                              
                              # サイドバー
                              sidebarPanel(
                                  fluidRow(
                                      column(6, sliderInput("year_inst", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
-                                     column(6, selectInput("group_inst", "グループ", choices = c("全機関", names(Group)))),
+                                     column(6, selectInput("group_inst", "グループ", choices = c("---", "全機関", names(Group)))),
                                      column(6, textInput("inst_inst", "追加機関", value = "信州"))
                                  ),
                                  
@@ -32,16 +30,6 @@ tabItem_inst <- tabItem(tabName = "institution", sidebarLayout(
                                                       ),
                                                       plotlyOutput("bar_inst"),
                                                       br(),
-                                                      
-
-                                                      # ヒストグラム 
-#                                                      h1(strong("Histogram")),
-#                                                      fluidRow(
-#                                                          column(2, selectInput("hist_var", "X軸の値", choices = list("件数", "総額", "平均", "総額シェア"), selected = "総額"))
-#                                                      ),
-#                                                      plotlyOutput("hist_inst"),
-#                                                      br(),
-
                                                                                                             
                                                       # 散布図
                                                       h1(strong("Scatter plot")),

@@ -1,5 +1,3 @@
-source("global.R")
-
 tabItem_network <- tabItem(tabName = "network", sidebarLayout(
                              
                              # サイドバー

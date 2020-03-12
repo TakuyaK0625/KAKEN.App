@@ -1,4 +1,3 @@
-source("global.R")
 radarD <- fread("02_radar/radar_df.csv")
 
 

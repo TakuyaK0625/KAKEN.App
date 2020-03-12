@@ -1,5 +1,3 @@
-source("global.R")
-
 # UI
 tabItem_radar <- tabItem(tabName = "radar",
                                sidebarLayout(
@@ -11,7 +9,7 @@ tabItem_radar <- tabItem(tabName = "radar",
                                        textInput("institution2", "機関名２", value = ""),
                                        textInput("institution3", "機関名３", value = ""),
                                        br(),
-                                       selectInput("type_radar", "対象", choices = c("件数", "総額")),
+                                       selectInput("type_radar", "対象", choices = c("件数", "総額"))
                                        ),
                               
                               # メインパネル

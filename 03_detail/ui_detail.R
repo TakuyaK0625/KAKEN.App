@@ -1,5 +1,3 @@
-source("global.R")
-
 # UI
 tabItem_detail <- tabItem(tabName = "detail",
                            sidebarLayout(
@@ -8,7 +6,7 @@ tabItem_detail <- tabItem(tabName = "detail",
                                sidebarPanel(
                                    fluidRow(
                                        column(6, sliderInput("year_detail", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
-                                       column(6, selectInput("group_detail", "グループ", choices = c("全機関", names(Group))))
+                                       column(6, selectInput("group_detail", "グループ", choices = c("---", "全機関", names(Group))))
                                    ),
                                    p(strong("審査区分")),
                                    shinyTree("tree_detail", checkbox = TRUE),

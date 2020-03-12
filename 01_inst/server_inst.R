@@ -4,18 +4,19 @@ observe({
   output$area_inst <- renderTree({ 
     review_list
     })
-  
+
+    
   # データのフィルタリング
   D0 <- reactive({
       
       # 研究機関グループでフィルター
       if (input$group_inst != "全機関"){
-          D <- D %>% filter(所属機関 %in% c(Group[[input$group_inst]], input$inst_inst))
+          instD <- instD %>% filter(所属機関 %in% c(Group[[input$group_inst]], input$inst_inst))
       }
       
       # 審査区分でフィルター
       area <- get_selected(input$area_inst, format = "classid") %>% unlist
-      D <- D %>% filter(区分名 %in% area) %>%
+      instD <- instD %>% filter(区分名 %in% area) %>%
       
       # 研究種目でフィルター
       filter(研究種目 %in% input$type_inst) %>%
@@ -52,13 +53,6 @@ observe({
           layout(xaxis = list(title = ""), yaxis = list(title = input$bar_yaxis))
   })
 
-  
-  # ヒストグラム 
-#  output$hist_inst <- renderPlotly({
-#      D_all() %>%
-#          plot_ly(x = ~eval(as.name(input$hist_var)), type = "histogram")
-#  })
-  
   
   # 散布図  
   output$scatter_inst <- renderPlotly({
@@ -126,6 +120,5 @@ observe({
           write.csv(D_line(), row.names = FALSE, fileEncoding = "CP932")
       }
   )
-      
 
 })

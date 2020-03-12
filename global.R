@@ -17,20 +17,18 @@ library(data.table)
 library(igraph)
 library(threejs)
 
-
 #########################################################
 # データのインポート
 #########################################################
 
 #------------
-# 科研費
-D <- fread("99_cleaned_data/cleaned_df.csv", stringsAsFactors = F) 
-
+# 科研データ
+instD <- fread("99_cleaned_data/cleaned_df.csv", stringsAsFactors = F, select = c("所属機関", "年度", "区分名", "研究種目", "総配分額")) 
+detailD <- fread("99_cleaned_data/cleaned_df.csv", stringsAsFactors = F, select = c("所属機関", "年度", "区分名", "研究種目", "職名", "直接経費", "年数", "研究分担者", "キーワード")) 
 
 #------------
-# 審査区分表
+# 審査区分
 kubun <- read.csv("99_cleaned_data/kubun.csv", stringsAsFactors = F)
-
 
 #------------
 # 大学リスト
@@ -43,7 +41,7 @@ univ <- read.csv("99_cleaned_data/university.csv", stringsAsFactors = F)
 
 #---------------
 # 研究種目リスト
-type <- D$研究種目 %>% unique %>% sort
+type <- instD$研究種目 %>% unique %>% sort
 
 
 #----------------------------

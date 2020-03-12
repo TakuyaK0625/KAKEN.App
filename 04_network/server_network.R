@@ -1,4 +1,3 @@
-source("global.R")
 networkD <- fread("04_network/network.csv")
 researcher <- fread("04_network/researcher.csv")
 

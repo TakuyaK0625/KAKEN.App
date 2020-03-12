@@ -1,5 +1,3 @@
-source("global.R")
-
 # UI
 tabItem_about <- tabItem(tabName = "about",
           
