@@ -1,8 +1,26 @@
+# 審査区分チェックボックス
 observe({
-    
-    output$tree_detail <- renderTree({ 
+    output$area_detail <- renderTree({ 
         review_list
-    })
+        })
+})
+
+
+# 研究種目全選択ボタン
+observe({
+    if(input$selectall_detail == 0) return(NULL) 
+    else if (input$selectall_detail%%2 == 0)
+    {
+        updateCheckboxGroupInput(session, "type_detail", "研究種目", choices = type)
+    }
+    else
+    {
+        updateCheckboxGroupInput(session, "type_detail", "研究種目", choices = type, selected = type)
+    }
+})
+
+
+observe({
     
     DF <- reactive({
         
@@ -12,7 +30,7 @@ observe({
         }
         
         # 審査区分でフィルター
-        area <- get_selected(input$tree_detail, format = "classid") %>% unlist
+        area <- get_selected(input$area_detail, format = "classid") %>% unlist
         detailD <- detailD %>% filter(区分名 %in% area) 
 
         # 研究種目、年度でフィルター
