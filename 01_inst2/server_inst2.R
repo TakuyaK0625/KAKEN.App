@@ -1,0 +1,83 @@
+# 審査区分チェックボックス
+observe({
+    output$area_inst2 <- renderTree({ 
+        review_list
+        })
+})
+
+
+
+# 研究種目全選択ボタン
+observe({
+    if(input$selectall_inst2 == 0) return(NULL) 
+    else if (input$selectall_inst2%%2 == 0)
+    {
+        updateCheckboxGroupInput(session, "type_inst2", "研究種目", choices = type)
+    }
+    else
+    {
+        updateCheckboxGroupInput(session, "type_inst2", "研究種目", choices = type, selected = type)
+    }
+})
+
+
+observe({
+  # データのフィルタリング
+  D0 <- reactive({
+      
+      # 研究機関グループでフィルター
+      instD <- instD %>% filter(所属機関 %in% c(Group[[input$group_inst2]], input$inst_inst2))
+
+      # 審査区分でフィルター
+      area <- get_selected(input$area_inst2, format = "classid") %>% unlist
+      instD <- instD %>% filter(区分名 %in% area) %>%
+      
+      # 研究種目でフィルター
+      filter(研究種目 %in% input$type_inst2) %>%
+      
+      # 集計期間でフィルター      
+      filter(年度 %in% input$year_inst2[1]:input$year_inst2[2])
+  })
+  
+  
+# ---------------------  
+# 時系列タブ
+# ---------------------  
+  
+  # 折れ線グラフのためのDF
+  D_line <- reactive({
+      D0() %>%
+          group_by(所属機関, 年度) %>%
+          summarize(件数 = n(), 総額 = sum(as.numeric(総配分額)), 平均額 = round(総額/件数, 1)) %>%
+          ungroup %>%
+          mutate(総額シェア = round(100 * 総額/sum(総額), 3)) %>%
+          mutate(年度 = as.factor(年度)) 
+  })
+  
+ 
+  # 折れ線グラフ
+  output$line_inst2 <- renderPlotly({
+    D_line() %>%
+      plot_ly(x = ~年度, y = ~eval(as.name(input$line_yaxis2)), color = ~所属機関) %>% 
+          add_lines() %>%
+          layout(xaxis = list(range = input$year_inst2), yaxis = list(title = input$line_yaxis2))
+  })
+  
+  
+  # 集計表
+  output$table_line_inst2 <- renderDataTable({
+      D_line() %>% select(所属機関, 年度, input$line_yaxis2) %>% 
+          spread(key = 年度, value = input$line_yaxis2) %>%
+          datatable(rownames = FALSE)
+  })
+  
+  
+  # 集計表のダウンロード
+  output$downloadData_line2 <- downloadHandler(
+      filename = "kaken_summary.csv",
+      content = function(file) {
+          write.csv(D_line(), row.names = FALSE, fileEncoding = "CP932")
+      }
+  )
+
+})
