@@ -13,7 +13,8 @@ tabItem_network <- tabItem(tabName = "network", sidebarLayout(
                                  br(),
                                  
                                  # 研究種目チェックボックス
-                                 checkboxGroupInput("type_net", "研究種目", type)
+                                 checkboxGroupInput("type_net", "研究種目", type),
+                                 actionLink("selectall_net", "Select All")
                                ),
                              
                              # メインパネル
@@ -30,10 +31,14 @@ tabItem_network <- tabItem(tabName = "network", sidebarLayout(
                                               p("・研究分担者を有する研究課題のみを表示しています。"),
                                               p("・研究者（研究代表者と研究分担者）を頂点（node/vertex）、１つの課題における全ての研究者のペアを辺（link/edge）としてネットワークを描画しています（無向グラフ）。"),
                                               p("・特定の機関の研究者をハイライトできるようにしていますが、入力の際には法人種別と「〜大学」を削除してください。"),
-                                              p("・頂点にカーソルを合わせると研究者番号が表示されます。本来は８桁ですが、０から始まる研究者番号は０が落ちています。")
+                                              p("・各種の中心性指標については、以下のURLをご参照ください。"),
+                                              p("https://en.wikipedia.org/wiki/Centrality")
                                      ),
                                      tabPanel("ネットワーク", type = "tabs",
-                                              scatterplotThreeOutput("network")
+                                              scatterplotThreeOutput("network"),
+                                              br(),
+                                              h3(strong("中心性指標")),
+                                              dataTableOutput("centrality")
                                      )
                                  )
                                  )
