@@ -4,7 +4,7 @@ library(data.table)
 library(stringr)
 
 # 審査区分表
-kubun <- read.csv("kaken_kubun.csv")
+kubun <- fread("kaken_kubun.csv", colClasses = rep("character", 5))
 
 kubun %>% 
     mutate(中区分 = str_replace(中区分, "およびその関連分野", "")) %>%
