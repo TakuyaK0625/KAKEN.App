@@ -12,7 +12,7 @@ library(threejs)
 library(data.table)
 
 # データインポート
-d <- fread("../99_cleaned_data/cleaned_df.csv")
+d <- fread("../99_cleaned_data/cleaned_df.csv", colClasses = list(character = "代表ID"))
 
 
 ##########################
