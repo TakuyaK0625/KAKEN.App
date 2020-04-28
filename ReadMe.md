@@ -43,15 +43,15 @@ https://takuyak0625.shinyapps.io/KAKEN-App/
 \## 
 \## ─ Packages ─
 \##  package        * version date       lib source        
-\##  assertthat       0.2.1   2019-03-21 [1] CRAN (R 3.6.0)
-\##  base64enc        0.1-3   2015-07-28 [1] CRAN (R 3.6.0)
-\##  cli              2.0.1   2020-01-08 [1] CRAN (R 3.6.0)
-\##  colorspace       1.4-1   2019-03-18 [1] CRAN (R 3.6.0)
-\##  crayon           1.3.4   2017-09-16 [1] CRAN (R 3.6.0)
-\##  crosstalk        1.0.0   2016-12-21 [1] CRAN (R 3.6.0)
-\##  data.table     * 1.12.8  2019-12-09 [1] CRAN (R 3.6.0)
-\##  digest           0.6.23  2019-11-23 [1] CRAN (R 3.6.0)
-\##  dplyr          * 0.8.4   2020-01-31 [1] CRAN (R 3.6.0)
+\##  assertthat       0.2.1   2019-03-21 [1] CRAN (R 3.6.0)  
+\##  base64enc        0.1-3   2015-07-28 [1] CRAN (R 3.6.0)  
+\##  cli              2.0.1   2020-01-08 [1] CRAN (R 3.6.0)  
+\##  colorspace       1.4-1   2019-03-18 [1] CRAN (R 3.6.0)  
+\##  crayon           1.3.4   2017-09-16 [1] CRAN (R 3.6.0)  
+\##  crosstalk        1.0.0   2016-12-21 [1] CRAN (R 3.6.0)  
+\##  data.table     * 1.12.8  2019-12-09 [1] CRAN (R 3.6.0)  
+\##  digest           0.6.23  2019-11-23 [1] CRAN (R 3.6.0)  
+\##  dplyr          * 0.8.4   2020-01-31 [1] CRAN (R 3.6.0)  
 \##  DT             * 0.12    2020-02-05 [1] CRAN (R 3.6.0)
 \##  evaluate         0.14    2019-05-28 [1] CRAN (R 3.6.0)
 \##  fansi            0.4.1   2020-01-08 [1] CRAN (R 3.6.0)
@@ -85,7 +85,7 @@ https://takuyak0625.shinyapps.io/KAKEN-App/
 \##  scales           1.1.0   2019-11-18 [1] CRAN (R 3.6.0)
 \##  sessioninfo    * 1.1.1   2018-11-05 [1] CRAN (R 3.6.0)
 \##  shiny          * 1.4.0   2019-10-10 [1] CRAN (R 3.6.0)
-\##  shinydashboard * 0.7.1   2018-10-17 [1] CRAN (R 3.6.0)
+\##  shinydashboard * 0.7.1   2018-10-17 [1] CRAN (R 3.6.0
 \##  shinyTree      * 0.2.7   2019-05-27 [1] CRAN (R 3.6.0)
 \##  stringi          1.4.5   2020-01-11 [1] CRAN (R 3.6.0)
 \##  stringr        * 1.4.0   2019-02-10 [1] CRAN (R 3.6.0)
