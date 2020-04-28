@@ -23,20 +23,20 @@ observe({
 
 observe({
   # データのフィルタリング
-  D0 <- reactive({
+  D0 <- eventReactive(input$filter_inst2, {
       
       # 研究機関グループでフィルター
-      instD <- instD %>% filter(所属機関 %in% c(Group[[input$group_inst2]], input$inst_inst2))
+      instD <- instD[所属機関 %in% c(Group[[input$group_inst2]], input$inst_inst2)]
 
       # 審査区分でフィルター
       area <- get_selected(input$area_inst2, format = "classid") %>% unlist
-      instD <- instD %>% filter(区分名 %in% area) %>%
+      instD <- instD[区分名 %in% area]
       
       # 研究種目でフィルター
-      filter(研究種目 %in% input$type_inst2) %>%
+      instD <- instD[研究種目 %in% input$type_inst2]
       
       # 集計期間でフィルター      
-      filter(年度 %in% input$year_inst2[1]:input$year_inst2[2])
+      instD <- instD[年度 %in% input$year_inst2[1]:input$year_inst2[2]]
   })
   
   
@@ -46,12 +46,10 @@ observe({
   
   # 折れ線グラフのためのDF
   D_line <- reactive({
-      D0() %>%
-          group_by(所属機関, 年度) %>%
-          summarize(件数 = n(), 総額 = sum(as.numeric(総配分額)), 平均額 = round(総額/件数, 1)) %>%
-          ungroup %>%
-          mutate(総額シェア = round(100 * 総額/sum(総額), 3)) %>%
-          mutate(年度 = as.factor(年度)) 
+      D1 <- D0()[, .(件数 = .N, 総額 = sum(as.numeric(総配分額))), by = .(所属機関, 年度)]
+      D1[, 平均額 :=  round(総額/件数, 1)]
+      D1[, 総額シェア := round(100 * 総額/sum(総額), 3)]
+      D1[, 年度 := as.factor(年度)]
   })
   
  
@@ -66,9 +64,9 @@ observe({
   
   # 集計表
   output$table_line_inst2 <- renderDataTable({
-      D_line() %>% select(所属機関, 年度, input$line_yaxis2) %>% 
-          spread(key = 年度, value = input$line_yaxis2) %>%
-          datatable(rownames = FALSE)
+      D1 <- D_line()[, .(所属機関, 年度, eval(as.name(input$line_yaxis2)))]
+      D1 <- dcast(D1, formula = 所属機関 ~ 年度)
+      D1 %>% datatable(rownames = FALSE)
   })
   
   

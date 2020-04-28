@@ -22,41 +22,41 @@ observe({
 
 
 observe({
+    
+# ---------------------  
+# 総計タブ
+# ---------------------  
+    
   # データのフィルタリング
-  D0 <- reactive({
+  D0 <- eventReactive(input$filter_inst1, {
       
       # 研究機関グループでフィルター
       if (input$group_inst1 != "全機関"){
-          instD <- instD %>% filter(所属機関 %in% c(Group[[input$group_inst1]], input$inst_inst1))
+          instD <- instD[所属機関 %in% c(Group[[input$group_inst1]], input$inst_inst1)]
       }
       
       # 審査区分でフィルター
       area <- get_selected(input$area_inst1, format = "classid") %>% unlist
-      instD <- instD %>% filter(区分名 %in% area) %>%
+      instD <- instD[区分名 %in% area]
       
       # 研究種目でフィルター
-      filter(研究種目 %in% input$type_inst1) %>%
+      instD <- instD[研究種目 %in% input$type_inst1]
       
       # 集計期間でフィルター      
-      filter(年度 %in% input$year_inst1[1]:input$year_inst1[2])
+      instD <- instD[年度 %in% input$year_inst1[1]:input$year_inst1[2]]
   })
   
   
-# ---------------------  
-# 総計タブ
-# ---------------------  
-  
-  # 総計のためのDF
+ 
+# 総計のためのDF
   D_all <-reactive({ 
-      D0() %>% 
-          group_by(所属機関) %>%
-          summarize(件数 = n(), 総額 = sum(as.numeric(総配分額)), 平均額 = round(総額/件数, 1)) %>%
-          ungroup %>%
-          mutate(総額シェア = round(100 * 総額/sum(総額), 3)) %>%
-          mutate(color = ifelse(所属機関 == input$inst_inst1, "#ff7f0e", "#1f77b4")) %>%
-          arrange(-総額)
+      D1 <- D0()[, .(件数 = .N, 総額 = sum(as.numeric(総配分額))), by = "所属機関"] 
+      D1[, 平均額 := round(総額/件数, 1)]
+      D1[, 総額シェア := round(100 * 総額/sum(総額), 3)]
+      D1[, color := ifelse(所属機関 == input$inst_inst1, "#ff7f0e", "#1f77b4")]
+      D1[order(-総額)]
   })
-
+  
   
   # 棒グラフ
   output$bar_inst1 <- renderPlotly({
@@ -71,13 +71,13 @@ observe({
 
   
   # 散布図  
-  output$scatter_inst1 <- renderPlotly({
-      D_all() %>%
-          plot_ly() %>%
-          add_trace(x = ~eval(as.name(input$scatter_xaxis1)), y = ~eval(as.name(input$scatter_yaxis1)), type = "scatter",
-                    mode = "markers", marker = list(color = ~color), text = ~所属機関) %>%
-          layout(xaxis = list(title = ~input$scatter_xaxis1), yaxis = list(title = ~input$scatter_yaxis1))
-  })
+#  output$scatter_inst1 <- renderPlotly({
+#      D_all() %>%
+#          plot_ly() %>%
+#          add_trace(x = ~eval(as.name(input$scatter_xaxis1)), y = ~eval(as.name(input$scatter_yaxis1)), type = "scatter",
+#                    mode = "markers", marker = list(color = ~color), text = ~所属機関) %>%
+#          layout(xaxis = list(title = ~input$scatter_xaxis1), yaxis = list(title = ~input$scatter_yaxis1))
+#  })
 
   
   # 集計表

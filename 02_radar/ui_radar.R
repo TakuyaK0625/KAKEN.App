@@ -15,8 +15,6 @@ tabItem_radar <- tabItem(tabName = "radar",
                               # メインパネル
                               mainPanel(
                                   tabsetPanel(type = "tabs",
-                                              tabPanel("中区分", plotlyOutput("radar_m")),
-                                              tabPanel("大区分", plotlyOutput("radar_l")),
                                               tabPanel("備考", 
                                                        br(),
                                                        p("このページでは、審査区分ごとの採択件数や直接経費の総額をレーダーチャート形式で可視化することができます。
@@ -28,7 +26,9 @@ tabItem_radar <- tabItem(tabName = "radar",
                                                        p("調麻佐志（2018）「科学研究費補助事業採択データによる大学の強みや多様性の可視化」『特別研究促進費「研究力分析指標プロジェクト」報告書（2016-2017年度）』
                                                          https://www.ruconsortium.jp/uploaded/life/248_387_misc.pdf"),
                                                        p("・所属機関の定義については「機関別採択額・件数等」の備考をご参照ください。")
-                                                       )
+                                                       ),
+                                              tabPanel("中区分", plotlyOutput("radar_m")),
+                                              tabPanel("大区分", plotlyOutput("radar_l"))
                                   )
                               )
                             )

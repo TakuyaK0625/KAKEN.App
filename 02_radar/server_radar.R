@@ -1,7 +1,14 @@
-radarD <- fread("02_radar/radar_df.csv")
+radarD <- fread("02_radar/radar_df.csv", colClasses = list(numeric = c(1, 5), character = c(2:4, 6:8)))
 
-d <- radarD[年度 %in% 2018:2019
-         ][, 大区分:= NULL]
+clean.radar <- function(x, y){
+    d <- x[, .(N = .N, Total = sum(as.numeric(直接経費))), by = "所属機関"]
+    d[, LogAmount := log10(Total)-max(log10(Total)-4)]
+    d[, LogCount := log10(N)-max(log10(N)-4)]
+    d[, area := y]
+    as.data.table(d)
+}
+
+
 
 observe({
     
@@ -9,25 +16,25 @@ observe({
 # 中区分
     
     clean_M <- reactive({
-        radarD %>% 
-        filter(年度 %in% input$year_radar[1]:input$year_radar[2]) %>%
-        select(-大区分) %>% 
-        unique %>%
-        filter(!is.na(中区分コード)) %>%
-        nest(-中区分コード) %>%
-        mutate(clean = map2(data, 中区分コード, clean.radar)) %>% .$clean %>%
-        bind_rows %>% select(所属機関, LogAmount, LogCount, area) %>%
-        gather(key = "key", value = "value", -所属機関, -area) %>%
-        spread(key = area, value = value, fill = 0) %>%
-        gather(key = "area", value = "value", -所属機関, -key) %>%
-        mutate(対象 = ifelse(str_detect(key, "Amount"), "件数", "総額")) %>%
+        D1 <- radarD[年度 %in% input$year_radar[1]:input$year_radar[2], -"大区分"]
+        D1 <- unique(D1)
+        D1 <- D1[!is.na(中区分コード)]
+        D1 <- D1[, .(data = list(.SD)), by = 中区分コード]
+        D1[, clean := list(map2(data, 中区分コード, clean.radar))]
+        
+        D2 <- bind_rows(D1[中区分コード != "", clean]) 
+        D2 <- D2[, .(所属機関, LogAmount, LogCount, area)]
+        D2 <- melt(D2, measure.vars = c("LogAmount", "LogCount"), variable.name = "key", value.name = "value")
+        D2 <- dcast(D2, formula = 所属機関+key ~ area, fill = 0)
+        D2 <- melt(D2, id.vars = c("所属機関", "key"), variable.name = "area", value.name = "value")
+        D2[, 対象 := ifelse(str_detect(key, "Amount"), "件数", "総額")]
         
         # filter
-        filter(所属機関 %in% c(input$institution1, input$institution2, input$institution3)) %>%
-        filter(対象 == input$type_radar) %>%
-        mutate(area = as.numeric(area)) %>%
-        arrange(area) %>%
-        bind_rows(.[1:length(unique(.$所属機関)),])
+        D3 <- D2[所属機関 %in% c(input$institution1, input$institution2, input$institution3)]
+        D3 <- D3[対象 == input$type_radar]
+        D3[, area := as.numeric(as.character(area))]
+        D3 <- D3[order(area)]
+        rbind(D3, D3[1:length(unique(D3$所属機関)),])
     })
 
     
@@ -50,22 +57,21 @@ observe({
     
     # 大区分ごとにネスト
     clean_L <- reactive({
-        radarD %>% 
-        filter(大区分 != "") %>%
-        filter(年度 %in% input$year_radar[1]:input$year_radar[2]) %>%
-        nest(-大区分) %>%
-        mutate(clean = map2(data, 大区分, clean.radar)) %>% .$clean %>%
-        bind_rows %>% select(所属機関, LogAmount, LogCount, area) %>%
-        gather(key = "key", value = "value", -所属機関, -area) %>%
-        spread(key = area, value = value, fill = 0) %>%
-        gather(key = "area", value = "value", -所属機関, -key) %>%
-        mutate(対象 = ifelse(str_detect(key, "Amount"), "件数", "総額")) %>%
+        D1 <- radarD[年度 %in% input$year_radar[1]:input$year_radar[2]]
+        D1 <- D1[, .(data = list(.SD)), by = 大区分]
+        D1[, clean := list(map2(data, 大区分, clean.radar))]
+        
+        D2 <- bind_rows(D1[, clean]) 
+        D2 <- D2[, .(所属機関, LogAmount, LogCount, area)]
+        D2 <- melt(D2, measure.vars = c("LogAmount", "LogCount"), variable.name = "key", value.name = "value")
+        D2 <- dcast(D2, formula = 所属機関 + key ~ area, fill = 0)
+        D2 <- melt(D2, id.vars = c("所属機関", "key"), variable.name = "area", value.name = "value")
+        D2[, 対象 := ifelse(str_detect(key, "Amount"), "件数", "総額")]
         
         # filter
-        filter(所属機関 %in% c(input$institution1, input$institution2, input$institution3)) %>%
-        filter(対象 == input$type_radar) %>%
-        arrange(area) %>%
-        bind_rows(.[1:length(unique(.$所属機関)),])
+        D3 <- D2[所属機関 %in% c(input$institution1, input$institution2, input$institution3)]
+        D3 <- D3[対象 == input$type_radar]
+        rbind(D3, D3[1:length(unique(D3$所属機関)),])
     })
     
     

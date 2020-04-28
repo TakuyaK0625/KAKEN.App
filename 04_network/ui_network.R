@@ -2,6 +2,13 @@ tabItem_network <- tabItem(tabName = "network", sidebarLayout(
                              
                              # サイドバー
                              sidebarPanel(
+                               
+                                  # フィルター適用ボタン
+                                  actionButton("filter_network", (strong("Apply Filter")), 
+                                            style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                  br(),
+                                  br(),
+                               
                                  fluidRow(
                                      column(6, sliderInput("year_net", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
                                      column(6, textInput("inst_net", "ハイライト機関", value = "信州"))
@@ -13,7 +20,7 @@ tabItem_network <- tabItem(tabName = "network", sidebarLayout(
                                  br(),
                                  
                                  # 研究種目チェックボックス
-                                 checkboxGroupInput("type_net", "研究種目", type),
+                                 checkboxGroupInput("type_net", "研究種目", sort(unique(networkD$研究種目))),
                                  actionLink("selectall_net", "Select All")
                                ),
                              

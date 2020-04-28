@@ -2,10 +2,18 @@ tabItem_inst1 <- tabItem(tabName = "institution1", sidebarLayout(
                              
                              # サイドバー
                              sidebarPanel(
+                               
+                                 # フィルター適用ボタン
+                                 actionButton("filter_inst1", (strong("Apply Filter")), 
+                                              style="color: #fff; background-color: #337ab7; bborder-color: #2e6da4"),
+                                 br(),
+                                 br(),
+                                 
+                                 # 研究期間
                                  fluidRow(
-                                     column(6, sliderInput("year_inst1", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
                                      column(6, selectInput("group_inst1", "グループ", choices = c("---", "全機関", names(Group)))),
-                                     column(6, textInput("inst_inst1", "追加機関", value = "信州"))
+                                     column(6, textInput("inst_inst1", "追加機関", value = "信州")),
+                                     column(12, sliderInput("year_inst1", "対象年度", min = 2018, max = 2020, value = c(2018, 2019)))
                                  ),
                                  
                                  # 審査区分チェックボックス
@@ -16,32 +24,31 @@ tabItem_inst1 <- tabItem(tabName = "institution1", sidebarLayout(
                                  # 研究種目チェックボックス
                                  checkboxGroupInput("type_inst1", "研究種目", type),
                                  actionLink("selectall_inst1", "Select All")
+                                 
                                ),
                              
                              # メインパネル
                              mainPanel(
                                  tabsetPanel(type = "tabs",
-                                             tabPanel("総計",
-
-                                                      # 棒グラフ  
+                                             tabPanel("Bar Plot",
                                                       h1(strong("Bar plot")),
                                                       fluidRow(
                                                           column(3, selectInput("bar_yaxis1", "Y軸の値", choices = list("件数", "総額", "平均額", "総額シェア"))),
                                                           column(3, sliderInput("bar_n1", "表示件数", min = 0, max = 50, value = 10, step = 1))
                                                       ),
-                                                      plotlyOutput("bar_inst1"),
-                                                      br(),
-                                                                                                            
-                                                      # 散布図
-                                                      h1(strong("Scatter plot")),
-                                                      fluidRow(
-                                                          column(2, selectInput("scatter_xaxis1", "X軸の値", choices = list("件数", "総額", "平均額", "総額シェア"), selected = "件数")),
-                                                          column(2, selectInput("scatter_yaxis1", "Y軸の値", choices = list("件数", "総額", "平均額", "総額シェア"), selected = "総額"))
+                                                      plotlyOutput("bar_inst1")
                                                       ),
-                                                      plotlyOutput("scatter_inst1"),
-                                                      br(),
-                                                      
-                                                      # 元データ
+                                             
+#                                             tabPanel("Scatter Plot",    
+#                                                      h1(strong("Scatter plot")),
+#                                                      fluidRow(
+#                                                          column(2, selectInput("scatter_xaxis1", "X軸の値", choices = list("件数", "総額", "平均額", "総額シェア"), selected = "件数")),
+#                                                          column(2, selectInput("scatter_yaxis1", "Y軸の値", choices = list("件数", "総額", "平均額", "総額シェア"), selected = "総額"))
+#                                                      ),
+#                                                      plotlyOutput("scatter_inst1")
+#                                                      ),
+                                             
+                                             tabPanel("Summary Data",    
                                                       h1(strong("Summary Data")),
                                                       dataTableOutput("table_all_inst1"),
                                                       downloadButton("downloadData_all1", "Download")

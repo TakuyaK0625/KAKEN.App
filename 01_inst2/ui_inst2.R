@@ -2,12 +2,20 @@ tabItem_inst2 <- tabItem(tabName = "institution2", sidebarLayout(
                              
                              # サイドバー
                              sidebarPanel(
-                                 fluidRow(
-                                     column(6, sliderInput("year_inst2", "対象年度", min = 2018, max = 2020, value = c(2018, 2019))),
-                                     column(6, selectInput("group_inst2", "グループ", choices = c("---", names(Group)))),
-                                     column(6, textInput("inst_inst2", "追加機関", value = "信州"))
-                                 ),
-                                 
+                               
+                               # フィルター適用ボタン
+                               actionButton("filter_inst2", (strong("Apply Filter")), 
+                                            style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                               br(),
+                               br(),
+                               
+                               # 研究期間/比較機関
+                               fluidRow(
+                                 column(6, selectInput("group_inst2", "グループ", choices = c("---", names(Group)))),
+                                 column(6, textInput("inst_inst2", "追加機関", value = "信州")),
+                                 column(12, sliderInput("year_inst2", "対象年度", min = 2018, max = 2020, value = c(2018, 2019)))
+                               ),
+                               
                                  # 審査区分チェックボックス
                                  p(strong("審査区分")),
                                  shinyTree("area_inst2", checkbox = TRUE),

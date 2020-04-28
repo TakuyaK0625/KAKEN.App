@@ -22,21 +22,19 @@ observe({
 
 observe({
     
-    DF <- reactive({
+    D0 <- eventReactive(input$filter_detail, {
         
         # 研究機関グループでフィルター
         if (input$group_detail != "全機関"){
-            detailD <- detailD %>% filter(所属機関 %in% Group[[input$group_detail]])
+            detailD <- detailD[所属機関 %in% Group[[input$group_detail]]]
         }
         
         # 審査区分でフィルター
         area <- get_selected(input$area_detail, format = "classid") %>% unlist
-        detailD <- detailD %>% filter(区分名 %in% area) 
+        detailD <- detailD[区分名 %in% area] 
 
         # 研究種目、年度でフィルター
-        detailD %>% 
-            filter(研究種目 %in% input$type_detail) %>%
-            filter(年度 %in% input$year_detail[1]:input$year_detail[2])
+        detailD[研究種目 %in% input$type_detail & 年度 %in% input$year_detail[1]:input$year_detail[2]]
     })
     
 
@@ -45,9 +43,9 @@ observe({
     
     # 棒グラフ（件数）
     output$job_count <- renderPlotly({
-        DF() %>% group_by(区分名, 職名) %>%
-            summarize(件数 = n()) %>%
-            mutate(職名 = factor(職名, levels = c("教授", "准教授", "講師", "助教", "その他"))) %>%
+        
+        D1 <- D0()[, .(件数 = .N), by = .(区分名, 職名)]
+        D1[, 職名 := factor(職名, levels = c("教授", "准教授", "講師", "助教", "その他"))] %>%
             plot_ly() %>%
             add_bars(y = ~区分名, x = ~件数, color = ~職名, orientation = "h") %>%
             layout(barmode = "stack", yaxis = list(title = ""))
@@ -56,13 +54,11 @@ observe({
     
     # 棒グラフ（割合）
     output$job_ratio <- renderPlotly({
-        DF() %>% group_by(区分名, 職名) %>%
-            summarize(件数 = n()) %>%
-            mutate(職名 = factor(職名, levels = c("教授", "准教授", "講師", "助教", "その他"))) %>%
-            ungroup() %>%
-            group_by(区分名) %>%
-            mutate(割合 = 100 * 件数/sum(件数)) %>%
-            plot_ly() %>%
+        
+        D1 <- D0()[, .(件数 = .N), by = .(区分名, 職名)]
+        D1[, 職名 := factor(職名, levels = c("教授", "准教授", "講師", "助教", "その他"))]
+        D1 <- D1[, .(職名, 割合 = 100 * 件数/sum(件数)), by = 区分名]
+        D1 %>% plot_ly() %>%
             add_bars(y = ~区分名, x = ~割合, color = ~職名, orientation = "h") %>%
             layout(barmode = "stack", yaxis = list(title = ""))
     })
@@ -73,15 +69,14 @@ observe({
     
     # 直接経費総額
     output$directcost <- renderPlotly({
-        DF() %>% 
-            filter(年数 %in% input$duration_detail[1]:input$duration_detail[2]) %>%
+        D0()[年数 %in% input$duration_detail[1]:input$duration_detail[2]] %>%
             plot_ly(y = ~区分名, x = ~直接経費, type = "box", orientation = "h") %>%
             layout(yaxis = list(title = ""))
     })
     
     # 年数
     output$years <- renderPlotly({
-        DF() %>% 
+        D0() %>% 
             plot_ly(y = ~区分名, x = ~年数, type = "box", orientation = "h") %>%
             layout(yaxis = list(title = ""))
     })
@@ -91,8 +86,8 @@ observe({
     
     # 箱ひげ図
     output$review_buntan_gragh <- renderPlotly({
-        DF() %>% filter(研究分担者 != "") %>% 
-            mutate(分担者数 = str_count(研究分担者, "\n") + 1) %>%
+        D0()[研究分担者 != ""
+                  ][, 分担者数 := str_count(研究分担者, "\n") + 1] %>%
             plot_ly(y = ~区分名, x = ~分担者数, type = "box", orientation = "h") %>%
             layout(yaxis = list(title = ""))
     })
@@ -103,7 +98,7 @@ observe({
     
     # データの整形
     keyword_df <- reactive({
-        DF()$キーワード %>% 
+        D0()$キーワード %>% 
             str_split(" / ") %>% 
             unlist() %>% 
             table(dnn = list("語彙")) %>% 

@@ -22,19 +22,28 @@ library(threejs)
 #########################################################
 
 #------------
-# 科研データ
-instD <- fread("99_cleaned_data/cleaned_df.csv", stringsAsFactors = F, select = c("所属機関", "年度", "区分名", "研究種目", "総配分額"))
-detailD <- fread("99_cleaned_data/cleaned_df.csv", stringsAsFactors = F, select = c("所属機関", "年度", "区分名", "研究種目", "職名", "直接経費", "年数", "研究分担者", "キーワード"))
+# データ
+instD <- fread("99_cleaned_data/cleaned_df.csv", 
+               colClasses = list(character = c(1:3,6,8:14), numeric = c(4,5)), 
+               select = c("所属機関", "年度", "区分名", "研究種目", "総配分額"))
+
+detailD <- fread("99_cleaned_data/cleaned_df.csv", 
+                 colClasses = list(character = c(1:3,6,8:14), numeric = c(4,5)), 
+                 select = c("所属機関", "年度", "区分名", "研究種目", "職名", "直接経費", "年数", "研究分担者", "キーワード"))
+
+networkD <- fread("04_network/network.csv", colClasses = c("character", "character", "character", "character", "integer", "character"))
+
+researcher <- fread("04_network/researcher.csv", colClasses = c("integer", "character", "character"))
 
 
 
 #------------
 # 審査区分
-kubun <- read.csv("99_cleaned_data/kubun.csv", stringsAsFactors = F)
+kubun <- read.csv("99_cleaned_data/kubun.csv", colClasses = rep("character", 5))
 
 #------------
 # 大学リスト
-univ <- read.csv("99_cleaned_data/university.csv", stringsAsFactors = F)
+univ <- read.csv("99_cleaned_data/university.csv", colClasses = rep("character", 7))
 
     
 #########################################################
@@ -81,18 +90,4 @@ Group <- list(旧帝大 = univ[univ$旧帝大 == 1,]$Name,
                  国立財務_G = univ[univ$国立財務 == "G",]$Name,
                  国立財務_H = univ[univ$国立財務 == "H",]$Name
 )
-
-
-
-#-----------------
-# レーダーチャート用関数
-
-clean.radar <- function(x, y){
-    
-    x %>% group_by(所属機関) %>%
-        summarize(N = n(), Total = sum(as.numeric(直接経費))) %>%
-        mutate(LogAmount = log10(Total)-max(log10(Total)-4)) %>%
-        mutate(LogCount = log10(N)-max(log10(N)-4)) %>%
-        mutate(area = y)
-}
 

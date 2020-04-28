@@ -1,12 +1,4 @@
 # --------------------------------------------------
-# データのインポート
-# --------------------------------------------------
-
-networkD <- fread("04_network/network.csv", colClasses = c("character", "character", "character", "character", "integer", "character"))
-researcher <- fread("04_network/researcher.csv", colClasses = c("integer", "character", "character"))
-
-
-# --------------------------------------------------
 # インプット
 # --------------------------------------------------
 
@@ -35,17 +27,17 @@ observe({
 observe({
   
   # データのフィルタリング
-  D <- reactive({
+  D <- eventReactive(input$filter_network, {
       
       # 審査区分でフィルター
       area <- get_selected(input$area_net, format = "classid") %>% unlist
-      networkD %>% filter(区分名 %in% area) %>%
+      networkD <- networkD[区分名 %in% area]
       
       # 研究種目でフィルター
-      filter(研究種目 %in% input$type_net) %>%
+      networkD <- networkD[研究種目 %in% input$type_net]
       
       # 集計期間でフィルター      
-      filter(年度 %in% input$year_net[1]:input$year_net[2])
+      networkD <- networkD[年度 %in% input$year_net[1]:input$year_net[2]]
   })
   
   # グラフ作成
@@ -62,9 +54,7 @@ observe({
   #ネットワーク
   output$network <- renderScatterplotThree({
     
-      inst <- researcher %>% filter(所属 == input$inst_net) %>% 
-          filter(年度 %in% input$year_net[1]:input$year_net[2]) %>%
-          .$ID
+      inst <- researcher[所属 == input$inst_net & 年度 %in% input$year_net[1]:input$year_net[2]][,ID]
       colors <- ifelse(V(g())$name %in% inst, "blue", "orange")
       set.seed(0)
       graphjs(g(), vertex.color = colors, vertex.size = 0.2, vertex.label = V(g())$name)
